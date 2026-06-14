@@ -3,8 +3,9 @@ import createHttpError from 'http-errors';
 import { User } from '../models/user.js';
 import { Session } from '../models/session.js';
 import { createSession, setSessionCookies } from '../services/auth.js';
+import { catchAsync } from '../utils/catchAsync.js';
 
-export const registerUser = async (req, res) => {
+export const registerUser = catchAsync(async (req, res) => {
   const { email, password } = req.body;
 
   const existingUser = await User.findOne({ email });
@@ -17,9 +18,9 @@ export const registerUser = async (req, res) => {
   setSessionCookies(res, session);
 
   res.status(201).json(user);
-};
+});
 
-export const loginUser = async (req, res) => {
+export const loginUser = catchAsync(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
@@ -33,9 +34,9 @@ export const loginUser = async (req, res) => {
   setSessionCookies(res, session);
 
   res.status(200).json(user);
-};
+});
 
-export const refreshUserSession = async (req, res) => {
+export const refreshUserSession = catchAsync(async (req, res) => {
   const { sessionId, refreshToken } = req.cookies;
 
   const session = await Session.findOne({ _id: sessionId, refreshToken });
@@ -50,9 +51,9 @@ export const refreshUserSession = async (req, res) => {
   setSessionCookies(res, newSession);
 
   res.status(200).json({ message: 'Session refreshed' });
-};
+});
 
-export const logoutUser = async (req, res) => {
+export const logoutUser = catchAsync(async (req, res) => {
   const { sessionId } = req.cookies;
 
   if (sessionId) {
@@ -64,4 +65,4 @@ export const logoutUser = async (req, res) => {
   res.clearCookie('sessionId');
 
   res.status(204).send();
-};
+});
