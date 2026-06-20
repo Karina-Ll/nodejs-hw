@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import { Joi } from 'celebrate';
 
 export const registerUserSchema = Joi.object({
   email: Joi.string().email().required(),
