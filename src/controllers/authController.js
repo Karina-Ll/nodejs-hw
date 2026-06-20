@@ -6,23 +6,18 @@ import { createSession, setSessionCookies } from '../services/auth.js';
 import { catchAsync } from '../utils/catchAsync.js';
 
 export const registerUser = catchAsync(async (req, res) => {
-  try {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) throw createHttpError(400, 'Email in use');
+  const existingUser = await User.findOne({ email });
+  if (existingUser) throw createHttpError(400, 'Email in use');
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ email, password: hashedPassword });
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const user = await User.create({ email, password: hashedPassword });
 
-    const session = await createSession(user._id);
-    setSessionCookies(res, session);
+  const session = await createSession(user._id);
+  setSessionCookies(res, session);
 
-    res.status(201).json(user);
-  } catch (err) {
-    console.error('REGISTER ERROR:', err);
-    throw err;
-  }
+  res.status(201).json(user);
 });
 
 export const loginUser = catchAsync(async (req, res) => {
