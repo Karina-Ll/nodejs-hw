@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { celebrate, Segments } from 'celebrate';
 import {
   registerUser,
   loginUser,
@@ -13,15 +14,14 @@ import {
   requestResetEmailSchema,
   resetPasswordSchema,
 } from '../validations/authValidation.js';
-import { validateBody } from '../middleware/validateBody.js';
 
 const router = Router();
 
-router.post('/auth/register', validateBody(registerUserSchema), registerUser);
-router.post('/auth/login', validateBody(loginUserSchema), loginUser);
+router.post('/auth/register', celebrate({ [Segments.BODY]: registerUserSchema }), registerUser);
+router.post('/auth/login', celebrate({ [Segments.BODY]: loginUserSchema }), loginUser);
 router.post('/auth/refresh', refreshUserSession);
 router.post('/auth/logout', logoutUser);
-router.post('/auth/request-reset-email', validateBody(requestResetEmailSchema), requestResetEmail);
-router.post('/auth/reset-password', validateBody(resetPasswordSchema), resetPassword);
+router.post('/auth/request-reset-email', celebrate({ [Segments.BODY]: requestResetEmailSchema }), requestResetEmail);
+router.post('/auth/reset-password', celebrate({ [Segments.BODY]: resetPasswordSchema }), resetPassword);
 
 export default router;

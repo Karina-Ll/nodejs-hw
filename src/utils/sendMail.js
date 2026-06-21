@@ -1,5 +1,4 @@
 import nodemailer from 'nodemailer';
-import createHttpError from 'http-errors';
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -10,15 +9,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendEmail = async ({ to, subject, html }) => {
-  try {
-    await transporter.sendMail({
-      from: process.env.SMTP_FROM,
-      to,
-      subject,
-      html,
-    });
-  } catch (error) {
-    throw createHttpError(500, 'Failed to send the email, please try again later.');
-  }
+export const sendEmail = async (options) => {
+  const { from = process.env.SMTP_FROM, to, subject, html } = options;
+  return transporter.sendMail({ from, to, subject, html });
 };
